@@ -6,5 +6,3 @@ class ManagerDB():
 
     def conect_database(self):
         return sqlite3.connect('stock.db')
-
-

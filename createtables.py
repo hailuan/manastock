@@ -7,7 +7,7 @@ cursor = conn.cursor()
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS Products(
     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-    code VARCHAR(20),
+    code TEXT,
     name TEXT,
     adr TEXT,
     tel INTEGER,
@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS ManagerStock(
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS Clients(
     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-    name VARCHAR(50),
+    name TEXT,
     adr TEXT,
     tel INTEGER,
     desc TEXT
@@ -93,11 +93,14 @@ CREATE TABLE IF NOT EXISTS OrdersClient(
     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
     idproduct INTEGER,
     idclient INTEGER,
+    adress_delive TEXT,
     quantity INTEGER,
     price_total INTEGER,
     date_order DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')),
     date_delivery DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')),
-    status VARCHAR(10),
+    status TEXT,
+    shipper TEXT,
+    desc TEXT,
     CONSTRAINT check_status CHECK(status IN ('delived','treating','cancel')),
     CONSTRAINT f_idclient FOREIGN KEY (idclient) REFERENCES Clients(id),
     CONSTRAINT f_idproduct FOREIGN KEY (idproduct) REFERENCES Product(id),
@@ -115,7 +118,8 @@ CREATE TABLE IF NOT EXISTS OrdersClient(
     price_total INTEGER,
     date_order DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')),
     date_delivery DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')),
-    status VARCHAR(10),
+    status TEXT,
+    desc TEXT
     CONSTRAINT check_status CHECK(status IN ('delived','treating','cancel')),
     CONSTRAINT f_idprovider FOREIGN KEY (idprovider) REFERENCES Provider(id),
     CONSTRAINT f_idproduct FOREIGN KEY (idproduct) REFERENCES Product(id),
