@@ -1,3 +1,7 @@
+"""Creeate a empty database at installation
+This use module sqlite3
+"""
+
 import sqlite3
 
 conn = sqlite3.connect('stock.db')
@@ -14,6 +18,17 @@ CREATE TABLE IF NOT EXISTS Products(
     price_purchase INTEGER,
     price_new INTEGER,
     price_sale INTEGER
+)
+""")
+
+# MyDiscount
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS MyDiscount(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    idproduct INTEGER,
+    quantity INTEGER,
+    discount REAL,
+    CONSTRAINT unique_discount UNIQUE (idproduct,quantity)
 )
 """)
 
@@ -74,6 +89,8 @@ CREATE TABLE IF NOT EXISTS Clients(
 )
 """)
 
+
+
 # OrderClient
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS OrderClient(
@@ -85,9 +102,8 @@ CREATE TABLE IF NOT EXISTS OrderClient(
     date_delivery DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')),
     price_total INTEGER,
     status TEXT,
-    shipper TEXT,
     desc TEXT,
-    CONSTRAINT check_status CHECK(status IN ('delived','treating','cancel')),
+    CONSTRAINT check_status CHECK(status IN ('delived','treating','cancel','partial')),
     CONSTRAINT f_idclient FOREIGN KEY (idclient) REFERENCES Clients(id),
     CONSTRAINT check_date CHECK (date_delivery >= date_order)
 )
@@ -101,8 +117,34 @@ CREATE TABLE IF NOT EXISTS DetailOrderClient(
     idproduct INTEGER,
     quantity INTEGER,
     price INTEGER,
+    desc TEXT,
     CONSTRAINT f_idproduct FOREIGN KEY (idproduct) REFERENCES Products(id),
     CONSTRAINT f_idorder FOREIGN KEY (idorder) REFERENCES OrderClient(id)
+)
+""")
+
+# DeliveryClient
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS DeliveryClient(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shipper TEXT,
+    idorder INTEGER,
+    date_delivery DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')),
+    desc TEXT,
+    CONSTRAINT f_idorder FOREIGN KEY (idorder) REFERENCES OrderClient(id)
+)
+""")
+
+# DetailDelyreyClient
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS DetailDeliveryClient(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    iddelivery,
+    idorder INTEGER,
+    idproduct INTEGER,
+    quantity INTEGER,
+    CONSTRAINT f_idproduct FOREIGN KEY (idproduct) REFERENCES Products(id),
+    CONSTRAINT f_idelivery FOREIGN KEY (iddelivery) REFERENCES DeliveryClient(id)
 )
 """)
 
